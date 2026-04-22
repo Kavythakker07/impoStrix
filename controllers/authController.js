@@ -772,17 +772,17 @@ name: playerName
 });
 
     await server.save();
+const io = req.app.get("io");
 
+io.to(serverCode).emit("playersUpdate", {
+  players: server.players.map(p => p.name)
+});
     res.json({
       success: true,
       data: server
     });
 
-    const io = req.app.get("io");
 
-io.to(serverCode).emit("playersUpdate", {
-  players: server.players.map(p => p.name)
-});
 
   } catch (error) {
 
@@ -931,7 +931,17 @@ selectedcategoriesNames: selectedcategoriesNames
 };
 
 await server.save();
+const io = req.app.get("io");
 
+io.to(serverCode).emit("gameStarted", {
+  players: finalPlayers,
+  category: randomCategory,
+  imposters: server.imposters,
+  hostName: server.hostName,
+  serverCode: server.serverCode,
+  word: server.word,
+  hint: server.hint
+});
 /* response */
 
 res.json({
@@ -945,15 +955,7 @@ serverCode: server.serverCode
 }
 });
 
-const io = req.app.get("io");
 
-io.to(serverCode).emit("gameStarted", {
-  players: finalPlayers,
-  category: randomCategory,
-  imposters: server.imposters,
-  hostName: server.hostName,
-  serverCode: server.serverCode
-});
 
 }catch(err){
 
@@ -1066,18 +1068,18 @@ p => p.name !== playerName
 
 await server.save();
 
+const io = req.app.get("io");
 
+io.to(serverCode).emit("playersUpdate", {
+  players: server.players.map(p => p.name)
+});
 res.json({
   
   
   removedPlayer: playerName,
   success:true });
 
-  const io = req.app.get("io");
 
-io.to(serverCode).emit("playersUpdate", {
-  players: server.players.map(p => p.name)
-});
 
 }catch(err){
 console.log(err);
