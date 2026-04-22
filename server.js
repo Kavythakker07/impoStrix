@@ -108,31 +108,7 @@ io.on("connection", (socket) => {
   });
 
   /* -------- START GAME -------- */
-  socket.on("startGame", async (data) => {
-    try {
-      const { serverCode } = data;
 
-      const serverDoc = await FriendsServer.findOne({
-        serverCode: serverCode.toUpperCase(),
-      });
-
-      if (!serverDoc) return;
-
-      serverDoc.gameStarted = true;
-      await serverDoc.save();
-
-      io.to(serverCode).emit("gameStarted", {
-        serverCode: serverDoc.serverCode,
-        players: serverDoc.players.map((p) => p.name),
-        hostName: serverDoc.hostName,
-      });
-
-      console.log("🎮 Game started (socket)");
-
-    } catch (err) {
-      console.log("❌ startGame socket error", err);
-    }
-  });
 
   socket.on("disconnect", () => {
     console.log("❌ User disconnected:", socket.id);
