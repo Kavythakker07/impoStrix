@@ -1,4 +1,4 @@
-app.set("trust proxy", 1);
+
 const upload = require("../utils/avatarDeploy");
 
 
