@@ -15,7 +15,7 @@ const { Server } = require("socket.io");
 const FriendsServer = require("./models/FriendsServer"); // make sure path correct
 
 const app = express();
-
+app.set("trust proxy", 1);
 /* ---------------- MIDDLEWARE ---------------- */
 
 app.use(cors());
