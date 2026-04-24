@@ -917,7 +917,7 @@ server.gameStarted=true;
 server.gameReveal=false;
 
 server.word = randomItem.word;
-
+server.hintEnabled = hintEnabledBool;
 server.hint =  hintEnabledBool ? randomItem.hint : null;
 server.category = randomCategory;
 server.imposters = imposterNames;
