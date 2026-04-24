@@ -835,7 +835,7 @@ message:"Server not found"
 
 const players = server.players.map(p=>p.name);
 
-if(players.length < 1){
+if(players.length < 2){
 return res.status(400).json({
 success:false,
 message:"Minimum 2 players required"
@@ -923,6 +923,7 @@ server.hint =  hintEnabled ? randomItem.hint : null;
 server.category = randomCategory;
 server.imposters = imposterNames;
 server.Selectedcategories=selectedcategoriesNames
+
 
 server.gameData={
 players: finalPlayers,
@@ -1161,7 +1162,7 @@ success:false,
 message:"Server not found"
 });
 }
-
+const hintEnabled = server.hintEnabled === true;
 /* ---------------- GET PLAYERS ---------------- */
 
 const players = server.players.map(p => p.name);
@@ -1212,8 +1213,7 @@ return{
 name,
 role: isImposter ? "imposter":"crewmate",
 word: isImposter ? null : randomItem.word,
-hint: isImposter ? randomItem.hint : null
-};
+hint: isImposter && hintEnabled ? randomItem.hint : null};
 
 });
 
@@ -1228,7 +1228,7 @@ server.gameReveal = false;
 
 server.category = randomCategory;
 server.word = randomItem.word;
-server.hint = randomItem.hint;
+server.hint = hintEnabled ? randomItem.hint : null;
 server.imposters = imposters;
 
 server.gameData = {
@@ -1248,7 +1248,7 @@ res.json({
 success:true,
 category:randomCategory,
 word:randomItem.word,
-hint:randomItem.hint,
+hint: hintEnabled ? randomItem.hint : null,
 imposters
 });
 
