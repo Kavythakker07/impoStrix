@@ -835,7 +835,7 @@ message:"Server not found"
 
 const players = server.players.map(p=>p.name);
 
-if(players.length < 1){
+if(players.length < 2){
 return res.status(400).json({
 success:false,
 message:"Minimum 2 players required"
@@ -866,6 +866,7 @@ success:false,
 message:"No items in category"
 });
 }
+
 
 const randomItem =
 categoryDoc.items[Math.floor(Math.random()*categoryDoc.items.length)];
@@ -917,7 +918,8 @@ server.gameStarted=true;
 server.gameReveal=false;
 
 server.word = randomItem.word;
-server.hint = randomItem.hint;
+
+server.hint =  hintEnabled ? randomItem.hint : null;
 server.category = randomCategory;
 server.imposters = imposterNames;
 server.Selectedcategories=selectedcategoriesNames
@@ -1073,11 +1075,7 @@ const io = req.app.get("io");
 io.to(serverCode).emit("playersUpdate", {
   players: server.players.map(p => p.name)
 });
-res.json({
-  
-  
-  removedPlayer: playerName,
-  success:true });
+
 
 
 
@@ -1266,7 +1264,9 @@ message:"Server error"
 }
 };
 
+const getdeleteServerFriends = async (req,res)=>{
 
+}
 
 
 const leaveFriendsServer = async (req,res)=>{
