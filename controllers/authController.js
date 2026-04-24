@@ -802,7 +802,7 @@ const startFriendsGame = async (req,res)=>{
 try{
 
 const { serverCode, categories, hintEnabled, imposters } = req.body;
-
+const hintEnabledBool = hintEnabled === true || hintEnabled === "true";
 let categoriesArray=[];
 
 if(Array.isArray(categories)){
@@ -892,8 +892,7 @@ return{
 name,
 role: isImposter ? "imposter" : "crewmate",
 word: isImposter ? null : randomItem.word,
-hint: isImposter && hintEnabled ? randomItem.hint : null
-};
+hint: isImposter && hintEnabledBool ? randomItem.hint : null};
 
 });
 
@@ -919,7 +918,7 @@ server.gameReveal=false;
 
 server.word = randomItem.word;
 
-server.hint =  hintEnabled ? randomItem.hint : null;
+server.hint =  hintEnabledBool ? randomItem.hint : null;
 server.category = randomCategory;
 server.imposters = imposterNames;
 server.Selectedcategories=selectedcategoriesNames
