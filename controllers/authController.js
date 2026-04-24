@@ -835,7 +835,7 @@ message:"Server not found"
 
 const players = server.players.map(p=>p.name);
 
-if(players.length < 2){
+if(players.length < 1){
 return res.status(400).json({
 success:false,
 message:"Minimum 2 players required"
