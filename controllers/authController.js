@@ -4,9 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const user = require("../models/users");
 const admin = require("../models/admin");
-const courses = require("../models/courses");
 const additonForCategories= require("../models/additonForCategories");
-const LiveSession = require("../models/liveSessionsTime");
 const twilio = require('twilio');
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 const FriendsServer = require("../models/FriendsServer");
@@ -17,7 +15,7 @@ const sharp = require("sharp");
 const fs = require("fs");
 const { Resend } = require("resend");
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const  resend = new Resend(process.env.RESEND_API_KEY);
 const otpStore = new Map(); 
 
 
@@ -31,17 +29,18 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Email and password required." });
     }
 
-    /* ---------- FIND USER ---------- */
-
     const existingUser =
       await user.findOne({ email: emailOrusername }) ||
       await user.findOne({ username: emailOrusername });
 
-    const existingAdmin = await admin.findOne({ email: emailOrusername });
-
+      const existingAdmin =
+      (await admin.findOne({ email: emailOrusername })) ||
+      (await admin.findOne({ adminUsername: emailOrusername }));
     /* ---------- USER LOGIN ---------- */
 
-    if (existingUser) {
+    if (existingUser) 
+      {
+      
 
       const isPasswordValid = await bcrypt.compare(
         password,
@@ -52,7 +51,7 @@ const loginUser = async (req, res) => {
         return res.json({ message: "Invalid password" });
       }
 
-     const token = jwt.sign(
+const token = jwt.sign(
 {
 id: existingUser._id,
 email: existingUser.email,
@@ -63,7 +62,7 @@ process.env.JWT_SECRET,
 );
 console.log("TOKEN CREATED:", token);
 console.log("PAYLOAD CREATED:", jwt.decode(token));
-   const safeUser = {
+ const safeUser = {
   username: existingUser.username,
   email: existingUser.email,
   avatar: existingUser.avatar,
@@ -78,48 +77,53 @@ return res.json({
   token,
   user: safeUser
 });
-    }
 
-    /* ---------- ADMIN LOGIN ---------- */
+}
 
-    if (existingAdmin) {
 
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        existingAdmin.password
-      );
+/* ---------- ADMIN LOGIN ---------- */
 
-      if (!isPasswordValid) {
-        return res.json({ message: "Invalid password" });
-      }
 
-    const token = jwt.sign(
-{
-id: existingAdmin._id,
-admin: true
-},
-process.env.JWT_SECRET,
-{ expiresIn: "7d" }
-);
-console.log("TOKEN CREATED:", token);
-console.log("PAYLOAD CREATED:", jwt.decode(token));
+if (existingAdmin) {
 
-        const safeAdmin = {
-  username: existingAdmin.username,
-  email: existingAdmin.email,
-  avatar: existingAdmin.avatar,
-  bio: existingAdmin.bio,
-  rank: existingAdmin.rank,
-  credits: existingAdmin.credits,
-  wins: existingAdmin.wins
-};
+  const isPasswordValid = await bcrypt.compare(
+    password,
+    existingAdmin.password
+  );
 
-return res.json({
-  message: "Login successful!",
-  token,
-  user: safeAdmin
-});
-    }
+  if (!isPasswordValid) {
+    return res.status(401).json({
+      message: "Invalid password",
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      id: existingAdmin._id,
+      email: existingAdmin.email,
+      adminUsername: existingAdmin.adminUsername,
+      admin: true,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  const safeAdmin = {
+    _id: existingAdmin._id,
+    adminUsername: existingAdmin.adminUsername,
+    email: existingAdmin.email,
+    avatar: existingAdmin.avatar || "",
+    bio: existingAdmin.bio || "",
+  };
+
+  return res.status(200).json({
+    message: "Admin login successful!",
+    token,
+    admin: safeAdmin,
+  });
+  
+}
+
 
     /* ---------- NO USER FOUND ---------- */
 
@@ -127,7 +131,8 @@ return res.json({
       message: "User not found"
     });
 
-  } catch (error) {
+  } 
+  catch (error) {
 
     console.log(error);
 
@@ -182,7 +187,7 @@ from: "Throne Of Gamers <otp@impostrix.xyz>",
   subject: "Your OTP for TOG Registration",
   text: `Hey Mate!!\n\nYour OTP is: ${otp}\nValid for 5 minutes.\n\nTeam TOG`
 });
-    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     console.log('✅ OTP Email sent to:', email,otp);
     return res.status(200).json({ success:true,message: 'OTP sent to your email.' });
 
@@ -284,7 +289,7 @@ from: "Throne Of Gamers <otp@impostrix.xyz>",
   subject: "Your OTP for TOG Registration",
   text: `Hey Mate!!\n\nYour OTP is: ${otp}\nValid for 5 minutes.\n\nTeam TOG`
 });
-    // await transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
     console.log(`🔐 OTP for ${email}: ${otp}`);
 
     return res.status(200).json({ message: "OTP sent to your email." });
@@ -1329,6 +1334,8 @@ try{
 
 const { username,bio } = req.body;
 
+cosn
+
 
 const existingUser = await user.findOne({ username, _id: { $ne: userId } });
 
@@ -1411,6 +1418,7 @@ await user.deleteOne({ email: mailID });
 else if(existingAdmin && passCheckAdmin){
 await admin.deleteOne({ email: mailID });
 }
+
 
 return res.status(200).json({
   message:"Account deleted successfully"    
