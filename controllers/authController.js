@@ -189,7 +189,7 @@ from: "Throne Of Gamers <otp@impostrix.xyz>",
   subject: "Your OTP for TOG Registration",
   text: `Hey Mate!!\n\nYour OTP is: ${otp}\nValid for 5 minutes.\n\nTeam TOG`
 });
-    await transporter.sendMail(mailOptions);
+    
     console.log('✅ OTP Email sent to:', email,otp);
     return res.status(200).json({ success:true,message: 'OTP sent to your email.' });
 
@@ -291,7 +291,7 @@ from: "Throne Of Gamers <otp@impostrix.xyz>",
   subject: "Your OTP for TOG Registration",
   text: `Hey Mate!!\n\nYour OTP is: ${otp}\nValid for 5 minutes.\n\nTeam TOG`
 });
-    await transporter.sendMail(mailOptions);
+    
     console.log(`🔐 OTP for ${email}: ${otp}`);
 
     return res.status(200).json({ message: "OTP sent to your email." });
