@@ -121,6 +121,8 @@ if (existingAdmin) {
     token,
     admin: safeAdmin,
   });
+
+
   
 }
 
@@ -1334,7 +1336,6 @@ try{
 
 const { username,bio } = req.body;
 
-cosn
 
 
 const existingUser = await user.findOne({ username, _id: { $ne: userId } });
